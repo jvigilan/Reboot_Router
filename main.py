@@ -1,7 +1,7 @@
 import sys
-from time import strftime
 from time import localtime
 from time import sleep
+from time import strftime
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -9,6 +9,7 @@ from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
 from check_internet import is_connected
 
 """
@@ -26,6 +27,7 @@ profile.set_preference('network.http.phishy-userpass-length', 255)
 
 GECKO_PATH = 'C:/Users\John\PycharmProjects\Plex_Invoice_Auto_Email\GrabPDF\geckodriver2.exe'
 REMOTE_SERVER = "www.google.com"
+RUN_TIME = strftime("%Y-%m-%d %I:%M:%S %p", localtime())
 
 """
 Main Logic:
@@ -46,11 +48,11 @@ if not internet:
     #driver.find_element_by_xpath('//*[@id="status"]').click()
     sleep(300)
     if is_connected(REMOTE_SERVER):
-        print(strftime("%Y-%m-%d %I:%M:%S %p", localtime()), "Rebooted the router!!")
+        print(RUN_TIME, "Rebooted the router!!")
     else:
-        print(strftime("%Y-%m-%d %I:%M:%S %p", localtime()), "Router did not reboot in 5 minutes!!")
+        print(RUN_TIME, "Router did not reboot in 5 minutes!!")
 elif internet:
-    print(strftime("%Y-%m-%d %I:%M:%S %p", localtime()), "Internet is accessible!!")
+    print(RUN_TIME, "Internet is accessible!!")
 else:
-    print(strftime("%Y-%m-%d %I:%M:%S %p", localtime()), "Unknown error - please check logs!!")
+    print(RUN_TIME, "Unknown error - please check logs!!")
 
