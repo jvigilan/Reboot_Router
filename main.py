@@ -1,4 +1,5 @@
 import sys
+from configparser import ConfigParser
 from time import localtime
 from time import sleep
 from time import strftime
@@ -17,7 +18,7 @@ Set options:
 """
 
 options = Options()
-options.headless = True
+# options.headless = True
 profile = FirefoxProfile()
 profile.set_preference('browser.cache.disk.enable', False)
 profile.set_preference('browser.cache.memory.enable', False)
@@ -25,7 +26,18 @@ profile.set_preference('browser.cache.offline.enable', False)
 profile.set_preference('network.cookie.cookieBehavior', 1)
 profile.set_preference('network.http.phishy-userpass-length', 255)
 
-GECKO_PATH = 'C:/Users\John\PycharmProjects\Plex_Invoice_Auto_Email\GrabPDF\geckodriver2.exe'
+"""
+Constants and Parameters
+"""
+c = ConfigParser()
+
+if not c.read("params.ini"):
+    print("Need a params.ini file!")
+    sys.exit(2)
+
+GECKO_PATH = c["Defaults"]["Gecko_Path"]
+USER_NAME = c["Defaults"]["User_Name"]
+USER_PASS = c["Defaults"]["Password"]
 REMOTE_SERVER = "www.google.com"
 RUN_TIME = strftime("%Y-%m-%d %I:%M:%S %p", localtime())
 
@@ -38,14 +50,14 @@ if not internet:
     driver = webdriver.Firefox(firefox_profile=profile, options=options, executable_path=GECKO_PATH)
     driver.set_page_load_timeout(60)
     try:
-        driver.get('http://admin:6i9fTvEwG0@192.168.0.1/RouterStatus.asp')
+        driver.get('http://{0}:{1}@192.168.0.1/RouterStatus.asp'.format(USER_NAME, USER_PASS))
     except:
         print("Can't get to the router!!!")
         sys.exit(2)
 
-    WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.XPATH,('//*[@id="reboot"]'))))
+    WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.XPATH, ('//*[@id="reboot"]'))))
     driver.find_element_by_xpath('//*[@id="reboot"]').click()
-    #driver.find_element_by_xpath('//*[@id="status"]').click()
+    # driver.find_element_by_xpath('//*[@id="status"]').click()
     sleep(300)
     if is_connected(REMOTE_SERVER):
         print(RUN_TIME, "Rebooted the router!!")
@@ -55,4 +67,3 @@ elif internet:
     print(RUN_TIME, "Internet is accessible!!")
 else:
     print(RUN_TIME, "Unknown error - please check logs!!")
-

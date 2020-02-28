@@ -1,6 +1,11 @@
 import socket
 
 def is_connected(hostname):
+  """
+  Quick check for internet connectivity using sockets
+  :param hostname: website to try and connect to
+  :return: true or false
+  """
   try:
     # see if we can resolve the host name -- tells us if there is
     # a DNS listening
